@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const app = express();
 require('dotenv').config();
+
 const port = process.env.PORT || 5000;
 
 
@@ -32,6 +33,7 @@ async function run() {
     const shopCollection = db.collection("shop");
     const productsCollection = db.collection("product");
     const checkoutCollection = db.collection("checkOut");
+    const saveCheckoutCollection = db.collection("saveCheckOut");
 
     ///to post user
 
@@ -73,8 +75,18 @@ async function run() {
           const result = await checkoutCollection.insertOne(req.body);
         res.send(result);
       })
+      app.post('/checkout',async(req,res)=>{
+          const result = await saveCheckoutCollection.insertOne(req.body);
+        res.send(result);
+      })
       app.get('/check', async (req, res) => {
         const user = await checkoutCollection.find().toArray();
+         res.send(user)
+  
+  
+      })
+      app.get('/checkout', async (req, res) => {
+        const user = await checkoutCollection.find().sort({sellingDate: -1}).toArray();
          res.send(user)
   
   
@@ -219,6 +231,7 @@ async function run() {
       //get user's specific shop
       app.get('/shop/:email', async (req, res) => {
         const email = req.params.email;
+        console.log(email)
         const query = { ownerEmail: email };
         const user = await shopCollection.findOne(query);
          res.send(user)
@@ -247,6 +260,8 @@ async function run() {
         const result = await checkoutCollection.deleteMany();
         res.send(result);
       })
+
+      
 
     //   //to get all product or user
 

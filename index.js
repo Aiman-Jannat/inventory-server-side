@@ -76,7 +76,7 @@ async function run() {
         res.send(result);
       })
       app.post('/checkout',async(req,res)=>{
-        console.log(req.body)
+        // console.log(req.body)
           const result = await checkoutCollection.insertOne(req.body);
         res.send(result);
       })
@@ -96,8 +96,10 @@ async function run() {
       app.get('/users/admin/:email', async (req, res) => {
         const email = req.params.email;
         const query = { email: email };
+        
         const user = await userCollection.findOne(query);
         let admin = false;
+        console.log(user)
         if (user) {
           admin = user?.role === 'admin';
         }
@@ -139,7 +141,7 @@ async function run() {
        app.put('/products/selling/:id', async (req, res) => {
         const id = req.params.id;
         const updatedShop= req.body;
-    console.log("updated")
+    // console.log("updated")
         const filter = {
             _id: new ObjectId(id)
         };
@@ -190,7 +192,7 @@ async function run() {
      
       app.put('/users', async (req, res) => {
        const income = req.body;
-       console.log("income",income)
+      //  console.log("income",income)
         const filter = {
             role: "admin"
         };
@@ -213,7 +215,7 @@ async function run() {
 
        app.patch('/users/manager/:id', async (req, res) => {
       const id = req.params.id;
-      console.log(id);
+      // console.log(id);
       const filter = { _id: new ObjectId(id) };
       const updatedDoc = {
         $set: {

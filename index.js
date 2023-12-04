@@ -45,7 +45,11 @@ async function run() {
         const result = await productsCollection.insertOne(user);
         res.send(result);
       })
-
+    app.get('/products', async (req, res) => {
+        const result = await productsCollection.find().toArray();
+        res.send(result);
+      })
+      
      
     app.post('/users', async (req, res) => {
         const user = req.body;
@@ -71,29 +75,50 @@ async function run() {
           const result = await shopCollection.insertOne(item);
         res.send(result);
       })
-      app.post('/check',async(req,res)=>{
+      app.post('/checkout',async(req,res)=>{
+        console.log(req.body)
           const result = await checkoutCollection.insertOne(req.body);
         res.send(result);
       })
-      app.post('/checkout',async(req,res)=>{
+      app.post('/saveCheckOut',async(req,res)=>{
           const result = await saveCheckoutCollection.insertOne(req.body);
         res.send(result);
       })
-      app.get('/check', async (req, res) => {
-        const user = await checkoutCollection.find().toArray();
-         res.send(user)
+      app.get('/checkout/:email', async (req, res) => {
+        const email = req.params.email;
+        const query = { ownerEmail: email };
+        const user = await checkoutCollection.find(query).toArray();
+         res.send(user);
   
   
       })
-      app.get('/checkout', async (req, res) => {
-        const user = await checkoutCollection.find().sort({sellingDate: -1}).toArray();
-         res.send(user)
+
+      app.get('/users/admin/:email', async (req, res) => {
+        const email = req.params.email;
+        const query = { email: email };
+        const user = await userCollection.findOne(query);
+        let admin = false;
+        if (user) {
+          admin = user?.role === 'admin';
+        }
+  
+        res.send({ admin })
+  
+  
+      })
+
+
+      app.get('/saveCheckOut/:email', async (req, res) => {
+        const email = req.params.email;
+        const query = { ownerEmail: email };
+        const user = await saveCheckoutCollection.find(query).toArray();
+         res.send(user);
   
   
       })
       app.put('/shop', async (req, res) => {
         const updatedShop= req.body;
-    console.log("email",updatedShop.productLimit);
+    // console.log("email",updatedShop.productLimit);
         const filter = {
             ownerEmail: updatedShop.email
         };
@@ -255,7 +280,7 @@ async function run() {
 
     //   //to delete an user
 
-      app.delete('/check', async (req, res) => {
+      app.delete('/checkout', async (req, res) => {
         
         const result = await checkoutCollection.deleteMany();
         res.send(result);
@@ -265,10 +290,10 @@ async function run() {
 
     //   //to get all product or user
 
-    //   app.get('/menu', async (req, res) => {
-    //     const result = await menuCollection.find().toArray();
-    //     res.send(result);
-    //   })
+      app.get('/shop', async (req, res) => {
+        const result = await shopCollection.find().toArray();
+        res.send(result);
+      })
 
     //   //to add a product
 
